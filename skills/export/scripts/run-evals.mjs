@@ -12,6 +12,8 @@
 
 import { validateExport } from "./validate-export.mjs";
 
+export const VERSION = "2.2.1";
+
 const FRONT_MATTER = `---
 export_id: eval
 session: eval
