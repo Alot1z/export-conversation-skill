@@ -147,6 +147,28 @@ test("project install writes only under .agents/skills and is deterministic", ()
   assert.equal(run(["--project", project, "--check", "--json"]).status, 0);
 });
 
+test("project install refuses a foreign existing skill unless --force and preserves its files", () => {
+  const project = mkdtempSync(join(tmpdir(), "export-foreign-"));
+  const target = join(project, ".agents/skills/export-conversation");
+  mkdirSync(target, { recursive: true });
+  writeFileSync(join(target, "FOREIGN.md"), "do not delete");
+
+  const refused = run(["--project", project, "--json"]);
+  assert.equal(refused.status, 1);
+  assert.match(refused.stderr + refused.stdout, /not an export-conversation install/i);
+  assert.equal(readFileSync(join(target, "FOREIGN.md"), "utf8"), "do not delete");
+  assert.ok(!existsSync(join(target, "SKILL.md")));
+
+  const forced = run(["--project", project, "--force", "--json"]);
+  assert.equal(forced.status, 0, forced.stderr + forced.stdout);
+  assert.ok(existsSync(join(target, "SKILL.md")));
+  assert.deepEqual(
+    listFiles(target).filter((file) => file !== "FOREIGN.md"),
+    [...manifest.files].sort(),
+  );
+  assert.equal(readFileSync(join(target, "FOREIGN.md"), "utf8"), "do not delete");
+});
+
 test("project install rejects a non-directory root and symlink escape", () => {
   const base = mkdtempSync(join(tmpdir(), "export-safe-"));
   const file = join(base, "not-a-dir");
