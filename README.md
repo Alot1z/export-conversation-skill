@@ -221,6 +221,16 @@ The skill ensures diagrams are:
 - ✅ Indicating flow direction with arrows
 - ✅ Self-explanatory with context
 
+### Validation
+
+A fence count is not validation. `skills/export/scripts/render-mermaid.mjs` extracts every fenced block, renders SVG and PNG with Mermaid CLI, prints a size table and exits non-zero on syntax or renderer failures:
+
+```bash
+node skills/export/scripts/render-mermaid.mjs my-export.md --out target/mermaid
+```
+
+Inspect the PNGs for clipped labels, overlapping tags and extreme aspect ratios before sharing an export.
+
 ## Privacy & Security
 
 - **Automatic sanitization** - Sensitive data (API keys, passwords) replaced with `[REDACTED]`
@@ -231,10 +241,13 @@ The skill ensures diagrams are:
 
 ```
 export-conversation-skill/
-├── SKILL.md                 # Skill definition and instructions
+├── skills/export/
+│   ├── SKILL.md            # Skill definition and instructions
+│   └── scripts/
+│       └── render-mermaid.mjs  # Mermaid renderer and validator
+├── examples/               # Example exports
 ├── README.md               # This file
-├── LICENSE                 # MIT License
-└── examples/               # Example exports
+└── LICENSE                 # MIT License
     ├── simple-export.md
     ├── with-diagrams.md
     └── architecture-session.md

@@ -153,6 +153,21 @@ graph TD
 
 Use the Write tool to create the markdown file with the formatted content.
 
+### Step 4b - Render and validate every Mermaid diagram
+
+A fence count is not validation. If the export contains Mermaid blocks:
+
+1. Extract and render every block with a real renderer. From this skill's root:
+
+   ```bash
+   node scripts/render-mermaid.mjs <export.md>
+   ```
+
+   The helper writes SVG and PNG under `target/mermaid` and exits non-zero on syntax or renderer failure. It detects Chrome or Edge and falls back to Mermaid CLI's bundled browser. A direct `npx --yes @mermaid-js/mermaid-cli@12` invocation is equivalent when the helper is unavailable.
+2. Inspect the PNGs. Fix clipped labels, overlapping tags, unreadable text and extreme aspect ratios; shorten labels or change `TD`/`LR`, then rerender.
+3. Record the renderer version, dimensions and pass/fail result in the export.
+4. Do not report the export as verified while any diagram fails.
+
 ### Step 5 - Confirm to user
 
 Print a message:
@@ -163,7 +178,7 @@ The export includes:
 - Full conversation history ([N] messages)
 - [M] files modified
 - [K] commands executed
-- [L] Mermaid diagrams
+- [L] Mermaid diagrams rendered and checked
 - Session summary and statistics
 ```
 

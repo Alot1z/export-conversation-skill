@@ -5,6 +5,22 @@ All notable changes to the export-conversation skill will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-11-21
+
+### Added
+- Step 4b: every Mermaid block must be rendered and inspected, not just counted
+- `skills/export/scripts/render-mermaid.mjs` renderer/validator (SVG + PNG, size table, non-zero exit on failure)
+- `--out` and `--no-png` options
+
+### Changed
+- Renderer builds one quoted shell command instead of passing an argument array with `shell: true`
+- Default input is the newest `conversation-export-*.md`; no project-specific path
+- Puppeteer config always enables `--no-sandbox`, with a local browser when available
+
+### Fixed
+- Paths containing spaces no longer break rendering
+- `DEP0190` warning from `shell: true` with an args array
+
 ## [2.0.0] - 2026-04-08
 
 ### Added

@@ -1,14 +1,14 @@
 {
   "name": "export-conversation",
   "description": "Export Claude Code conversation sessions to beautifully formatted markdown files with diagrams, statistics, and full conversation history",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "Export Conversation Contributors"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/export-conversation-skill",
+  "homepage": "https://github.com/Alot1z/export-conversation-skill",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/export-conversation-skill.git"
+    "url": "https://github.com/Alot1z/export-conversation-skill.git"
   },
   "license": "MIT",
   "keywords": [
