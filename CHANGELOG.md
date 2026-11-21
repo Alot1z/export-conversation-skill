@@ -5,6 +5,18 @@ All notable changes to the export-conversation skill will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-11-21
+
+### Fixed
+- Redaction now scans every line, including lines that already contain a `[REDACTED]` placeholder; multiple secrets on one line and private-key-plus-token lines are handled.
+- Incremental merge now preserves manual blocks that exist only in the old export instead of dropping them.
+
+### Changed
+- `skill-manifest.json` separates seven runtime entries from `devFiles`; installed roots no longer receive `install-skill.mjs`, `run-evals.mjs` or `validate-release.mjs`.
+- Installer detects stale development files, prunes only known manifest-owned files, supports `--no-prune`, and adds safe `--project <root>` installation under `.agents/skills`.
+- Release validation now understands `devFiles`, rejects runtime/development overlap, and reports unclassified scripts.
+- Runtime `SKILL.md` no longer references development-only maintenance commands.
+
 ## [2.2.0] - 2026-11-21
 
 ### Added

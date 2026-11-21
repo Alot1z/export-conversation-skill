@@ -12,7 +12,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 
 const PATTERNS = [
   {
@@ -85,7 +85,6 @@ export function scanSecrets(text, options = {}) {
   const findings = [...privateKeyFindings(text)];
 
   text.split(/\r?\n/).forEach((line, index) => {
-    if (line.includes("[REDACTED]")) return;
     for (const type of lineFindings(line, options)) {
       findings.push({ line: index + 1, type });
     }
@@ -127,7 +126,7 @@ export function redactText(text, options = {}) {
   );
   output = output
     .split(/\r?\n/)
-    .map((line) => (line.includes("[REDACTED") ? line : redactLine(line, options)))
+    .map((line) => redactLine(line, options))
     .join("\n");
   return { text: output, findings: scanSecrets(text, options) };
 }

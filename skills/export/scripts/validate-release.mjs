@@ -10,7 +10,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 const SOURCE = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT = resolve(SOURCE, "../..");
 
@@ -20,6 +20,32 @@ function read(path) {
 
 function readJson(path) {
   return JSON.parse(read(path));
+}
+
+export function validateReleaseManifest(manifest, source) {
+  const errors = [];
+  const warnings = [];
+  const files = Array.isArray(manifest.files) ? manifest.files : [];
+  const devFiles = Array.isArray(manifest.devFiles) ? manifest.devFiles : [];
+  const allowed = new Set([...files, ...devFiles]);
+
+  for (const file of files) {
+    if (devFiles.includes(file)) {
+      errors.push(`manifest lists ${file} as both runtime and development`);
+    }
+  }
+
+  for (const file of allowed) {
+    if (!existsSync(join(source, file))) errors.push(`manifest lists a missing file: ${file}`);
+  }
+
+  for (const file of readdirSync(join(source, "scripts"))) {
+    if (file.endsWith(".mjs") && !allowed.has(`scripts/${file}`)) {
+      warnings.push(`unclassified script in scripts/: ${file}`);
+    }
+  }
+
+  return { ok: errors.length === 0, errors, warnings, runtime: files.length, development: devFiles.length };
 }
 
 export function validateRelease() {
@@ -49,15 +75,9 @@ export function validateRelease() {
     if (!existsSync(join(ROOT, file))) errors.push(`missing required file: ${file}`);
   }
 
-  const manifestFiles = new Set(manifest.files);
-  for (const file of manifest.files) {
-    if (!existsSync(join(SOURCE, file))) errors.push(`manifest lists a missing file: ${file}`);
-  }
-  for (const file of readdirSync(join(SOURCE, "scripts"))) {
-    if (file.endsWith(".mjs") && !manifestFiles.has(`scripts/${file}`)) {
-      warnings.push(`script not listed in skill-manifest.json: scripts/${file}`);
-    }
-  }
+  const manifestCheck = validateReleaseManifest(manifest, SOURCE);
+  errors.push(...manifestCheck.errors);
+  warnings.push(...manifestCheck.warnings);
 
   if (readme.includes("YOUR_USERNAME")) errors.push("README.md still contains YOUR_USERNAME");
   if (!readme.includes("https://github.com/Alot1z/export-conversation-skill")) {

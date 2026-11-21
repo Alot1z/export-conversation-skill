@@ -7,7 +7,7 @@
 
 ## Divergence
 
-The fork adds the verified export pipeline (2.2.0). Keep that work as small,
+The fork adds the verified export pipeline (2.2.x). Keep that work as small,
 reviewable commits on `main` so it can be offered upstream as a pull request.
 
 - Rebase new upstream releases onto `main`; do not merge unrelated history.

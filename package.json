@@ -1,11 +1,11 @@
 {
   "name": "export-conversation-skill",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "type": "module",
   "description": "Export agent conversations to verified Markdown with rendered Mermaid diagrams",
   "scripts": {
-    "test": "node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs",
+    "test": "node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs tests/manifest.test.mjs",
     "test:render": "node --test tests/render.test.mjs",
     "validate": "node skills/export/scripts/validate-release.mjs",
     "install:check": "node skills/export/scripts/install-skill.mjs --check"

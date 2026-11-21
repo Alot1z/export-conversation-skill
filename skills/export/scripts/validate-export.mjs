@@ -15,7 +15,7 @@ import { scanSecrets } from "./redact.mjs";
 import { extractMessages, parseFrontMatter } from "./merge-export.mjs";
 import { extractBlocks } from "./render-mermaid.mjs";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 
 const REQUIRED_MARKERS = [
   "<!-- export:generated:summary:start -->",

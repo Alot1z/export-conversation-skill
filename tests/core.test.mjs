@@ -144,6 +144,56 @@ test("redactText removes common secrets without leaking values", () => {
   assert.ok(redacted.text.includes("[REDACTED"));
 });
 
+test("redaction scans lines that already contain a placeholder", () => {
+  const source = "password: [REDACTED] sk-abcdefghijklmnopqrstuvwx\n";
+  const findings = scanSecrets(source);
+  assert.ok(findings.some((finding) => finding.type === "openai-key"));
+  assert.ok(!findings.some((finding) => finding.type === "credential-assignment"));
+
+  const redacted = redactText(source);
+  assert.doesNotMatch(redacted.text, /sk-abcdefghijklmnopqrstuvwx/);
+  assert.match(redacted.text, /password: \[REDACTED\]/);
+  assert.equal(scanSecrets(redacted.text).length, 0);
+  assert.equal(redactText(redacted.text).text, redacted.text);
+});
+
+test("redaction removes multiple secrets on one line", () => {
+  const source = "key: sk-abcdefghijklmnopqrstuvwx token: ghp_abcdefghijklmnopqrstuvwx\n";
+  const findings = scanSecrets(source);
+  assert.ok(findings.some((finding) => finding.type === "openai-key"));
+  assert.ok(findings.some((finding) => finding.type === "github-token"));
+
+  const redacted = redactText(source);
+  assert.doesNotMatch(redacted.text, /sk-|ghp_/);
+  assert.equal(scanSecrets(redacted.text).length, 0);
+});
+
+test("redaction handles a private key and a token on the same line", () => {
+  const source = [
+    "-----BEGIN RSA PRIVATE KEY-----",
+    "MIIEow",
+    "-----END RSA PRIVATE KEY-----",
+    "key: sk-abcdefghijklmnopqrstuvwx",
+  ].join("\n");
+
+  const findings = scanSecrets(source);
+  assert.ok(findings.some((finding) => finding.type === "private-key"));
+  assert.ok(findings.some((finding) => finding.type === "openai-key"));
+
+  const redacted = redactText(source);
+  assert.match(redacted.text, /\[REDACTED_PRIVATE_KEY\]/);
+  assert.doesNotMatch(redacted.text, /sk-abcdefghijklmnopqrstuvwx/);
+  assert.equal(scanSecrets(redacted.text).length, 0);
+});
+
+test("redaction is idempotent and does not report placeholders", () => {
+  const source = "password: [REDACTED]\nkey: [REDACTED]\n";
+  assert.deepEqual(scanSecrets(source), []);
+  const once = redactText(source).text;
+  assert.equal(once, source);
+  assert.equal(redactText(once).text, once);
+});
+
 test("parseFrontMatter and message extraction are stable", () => {
   const doc = parseFrontMatter(document({ messages: 2 }));
   assert.equal(doc.data.export_id, "fixture");
@@ -165,6 +215,39 @@ test("mergeExports appends only new messages and preserves manual blocks", () =>
   assert.equal(extractMessages(result.text).length, 4);
   assert.equal(new Set(extractMessages(result.text).map((message) => message.index)).size, 4);
   assert.match(result.text, /last_message: 4/);
+});
+
+test("mergeExports preserves manual blocks that exist only in the old export", () => {
+  const oldText = document({
+    messages: 2,
+    manual: "old notes",
+    extra: "\n<!-- export:manual:extra:start -->\nkeep me\n<!-- export:manual:extra:end -->\n",
+  });
+  const newText = document({ messages: 5, summary: "new summary", manual: "new notes" });
+  const result = mergeExports(oldText, newText, { now: "2026-11-21T00:00:00.000Z" });
+
+  assert.match(result.text, /keep me/);
+  assert.equal((result.text.match(/export:manual:extra:start/g) ?? []).length, 1);
+  assert.equal(result.preservedManual, 2);
+  assert.equal(extractMessages(result.text).length, 5);
+  assert.match(result.text, /last_message: 5/);
+});
+
+test("mergeExports keeps new manual blocks and is deterministic", () => {
+  const oldText = document({ messages: 1, manual: "old notes" });
+  const newText = document({
+    messages: 2,
+    manual: "new notes",
+    extra: "\n<!-- export:manual:new-only:start -->\nnew block\n<!-- export:manual:new-only:end -->\n",
+  });
+  const options = { now: "2026-11-21T00:00:00.000Z" };
+  const first = mergeExports(oldText, newText, options);
+  const second = mergeExports(oldText, newText, options);
+
+  assert.equal(first.text, second.text);
+  assert.match(first.text, /new block/);
+  assert.match(first.text, /old notes/);
+  assert.doesNotMatch(first.text, /new notes/);
 });
 
 test("mergeExports refuses mismatched export ids unless forced", () => {

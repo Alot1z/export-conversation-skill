@@ -29,7 +29,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 const CLI = "@mermaid-js/mermaid-cli@12.2.0";
 const WINDOWS = process.platform === "win32";
 const SCRIPT = basename(process.argv[1] ?? "render-mermaid.mjs");

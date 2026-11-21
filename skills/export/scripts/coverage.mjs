@@ -13,7 +13,7 @@
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 
 export function coverageOf(transcript) {
   if (!transcript || typeof transcript !== "object") throw new Error("transcript must be an object");

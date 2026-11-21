@@ -23,7 +23,7 @@
 
 🔒 **Privacy-Aware** - Sanitizes sensitive information (API keys, passwords)
 
-## Verification, safety and continuity (2.2.0)
+## Verification, safety and continuity (2.2.1)
 
 The skill no longer trusts a fence count. Every export passes four gates:
 
@@ -364,6 +364,13 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 ```
 
 ## Changelog
+
+### v2.2.1 - 2026-11-21
+
+- Redaction scans mixed placeholder/secret lines and is idempotent.
+- Merge preserves manual blocks found only in the old export.
+- Installed roots receive seven runtime files only; stale dev tooling is reported and pruned.
+- Added safe project installation with `--project`.
 
 ### v2.2.0 - 2026-11-21
 - Redaction gate for secrets, credentials and optional paths/emails

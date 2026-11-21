@@ -20,7 +20,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 
-export const VERSION = "2.2.0";
+export const VERSION = "2.2.1";
 
 const MESSAGE = /<!-- export:message:(\d+) -->\r?\n([\s\S]*?)(?=<!-- export:message:\d+ -->|<!-- export:messages:end -->)/g;
 const REGION = /<!-- export:messages:start -->[\s\S]*?<!-- export:messages:end -->/;
@@ -95,11 +95,26 @@ export function mergeExports(oldText, newText, options = {}) {
     [...oldDoc.body.matchAll(MANUAL)].map((match) => [match[1], match[2]]),
   );
   let preservedManual = 0;
+  const matchedManual = new Set();
   body = body.replace(MANUAL, (whole, id, content) => {
     if (!manual.has(id)) return whole;
+    matchedManual.add(id);
     preservedManual += 1;
     return `<!-- export:manual:${id}:start -->${manual.get(id)}<!-- export:manual:${id}:end -->`;
   });
+
+  const oldOnly = [...manual.entries()].filter(([id]) => !matchedManual.has(id));
+  if (oldOnly.length > 0) {
+    const addition = oldOnly
+      .map(([id, content]) => `<!-- export:manual:${id}:start -->${content}<!-- export:manual:${id}:end -->`)
+      .join("\n");
+    const heading = "## Full Conversation";
+    const index = body.indexOf(heading);
+    body = index >= 0
+      ? `${body.slice(0, index)}${addition}\n\n${body.slice(index)}`
+      : `${body.trimEnd()}\n\n${addition}\n`;
+    preservedManual += oldOnly.length;
+  }
 
   const data = {
     ...newDoc.data,

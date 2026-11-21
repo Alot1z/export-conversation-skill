@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs
+      - run: node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs tests/manifest.test.mjs
       - run: node skills/export/scripts/validate-release.mjs
 
   render:
