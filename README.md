@@ -390,7 +390,7 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 ## Development
 
 ```bash
-node --test "tests/*.test.mjs"          # unit and CLI tests
+node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs          # unit and CLI tests
 RUN_MERMAID=1 node --test tests/render.test.mjs  # real Mermaid render (slow)
 node skills/export/scripts/validate-release.mjs  # versions, manifest, docs
 node skills/export/scripts/install-skill.mjs --check
