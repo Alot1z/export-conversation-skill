@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Export agent conversations to verified Markdown with rendered Mermaid diagrams",
   "scripts": {
-    "test": "node --test \"tests/*.test.mjs\"",
+    "test": "node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs",
     "test:render": "node --test tests/render.test.mjs",
     "validate": "node skills/export/scripts/validate-release.mjs",
     "install:check": "node skills/export/scripts/install-skill.mjs --check"
