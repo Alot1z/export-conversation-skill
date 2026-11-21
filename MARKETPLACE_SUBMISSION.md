@@ -50,10 +50,10 @@ export-conversation-skill/
   "author": {
     "name": "Export Conversation Contributors"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/export-conversation-skill",
+  "homepage": "https://github.com/Alot1z/export-conversation-skill",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/export-conversation-skill.git"
+    "url": "https://github.com/Alot1z/export-conversation-skill.git"
   },
   "license": "MIT",
   "keywords": [
@@ -220,7 +220,7 @@ Current version: **2.0.0**
 - [ ] `plugin.json` has all required fields
 - [ ] Skills tested and working
 - [ ] CHANGELOG updated
-- [ ] Before submitting, replace YOUR_USERNAME in URLs with actual username
+- [ ] Before submitting, replace Alot1z in URLs with actual username
 
 ---
 

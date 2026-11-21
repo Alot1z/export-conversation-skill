@@ -30,8 +30,8 @@ export-conversation-skill/
 - [x] **Author:** Export Conversation Contributors
 - [x] **License:** MIT
 - [x] **Keywords:** 9 relevant keywords for discoverability
-- [x] **Homepage:** GitHub repository URL (update YOUR_USERNAME)
-- [x] **Repository:** Git repository URL (update YOUR_USERNAME)
+- [x] **Homepage:** GitHub repository URL (update Alot1z)
+- [x] **Repository:** Git repository URL (update Alot1z)
 
 ## ✅ Skill Configuration
 
@@ -133,7 +133,7 @@ Should continue working after reload.
 
 ### 1. Update Repository URLs
 
-Replace `YOUR_USERNAME` in these files:
+Replace `Alot1z` in these files:
 - [ ] `.claude-plugin/plugin.json` (2 locations)
 - [ ] `README.md` (multiple locations)
 - [ ] `CONTRIBUTING.md` (multiple locations)
@@ -154,7 +154,7 @@ git commit -m "feat: Initial release v2.0.0 with diagram support"
 
 # Create GitHub repo and push
 # Follow GitHub's instructions to create remote
-git remote add origin https://github.com/YOUR_USERNAME/export-conversation-skill.git
+git remote add origin https://github.com/Alot1z/export-conversation-skill.git
 git branch -M main
 git push -u origin main
 ```
@@ -184,7 +184,7 @@ Topics: `claude-code`, `plugin`, `export`, `markdown`, `diagrams`, `mermaid`, `d
 1. Visit: https://claude.ai/settings/plugins/submit
 2. Fill in:
    - **Plugin name:** export-conversation
-   - **Repository URL:** https://github.com/YOUR_USERNAME/export-conversation-skill
+   - **Repository URL:** https://github.com/Alot1z/export-conversation-skill
    - **Description:** (copy from plugin.json)
    - **Version:** 2.0.0
 3. Submit for review
@@ -199,7 +199,7 @@ Topics: `claude-code`, `plugin`, `export`, `markdown`, `diagrams`, `mermaid`, `d
 
 **Plugin Name:** export-conversation
 
-**Repository URL:** https://github.com/YOUR_USERNAME/export-conversation-skill
+**Repository URL:** https://github.com/Alot1z/export-conversation-skill
 
 **Description:**
 Export Claude Code conversation sessions to beautifully formatted markdown files with diagrams, statistics, and full conversation history. Automatically generates Mermaid diagrams for architecture discussions, tracks file changes, and creates comprehensive session documentation.
@@ -283,7 +283,7 @@ After launch, track:
 Your plugin meets all marketplace requirements. Complete the pre-submission actions above, then submit to the official marketplace.
 
 **Next Steps:**
-1. Replace YOUR_USERNAME in all files
+1. Replace Alot1z in all files
 2. Create GitHub repository
 3. Push code and create release tag
 4. Submit via claude.ai/settings/plugins/submit or platform.claude.com/plugins/submit

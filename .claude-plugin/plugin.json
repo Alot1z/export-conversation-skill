@@ -1,7 +1,7 @@
 {
   "name": "export-conversation",
   "description": "Export Claude Code conversation sessions to beautifully formatted markdown files with diagrams, statistics, and full conversation history",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "author": {
     "name": "Export Conversation Contributors"
   },

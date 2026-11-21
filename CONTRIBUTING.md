@@ -6,7 +6,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 1. **Fork and clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/export-conversation-skill.git
+   git clone https://github.com/Alot1z/export-conversation-skill.git
    cd export-conversation-skill
    ```
 
@@ -225,8 +225,8 @@ Screenshots, mockups, examples, etc.
 
 ## Questions?
 
-- 💬 Open a [Discussion](https://github.com/YOUR_USERNAME/export-conversation-skill/discussions)
-- 🐛 Report [Issues](https://github.com/YOUR_USERNAME/export-conversation-skill/issues)
+- 💬 Open a [Discussion](https://github.com/Alot1z/export-conversation-skill/discussions)
+- 🐛 Report [Issues](https://github.com/Alot1z/export-conversation-skill/issues)
 - 📧 Contact maintainers (see README)
 
 ## Recognition

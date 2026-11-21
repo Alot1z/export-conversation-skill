@@ -5,6 +5,21 @@ All notable changes to the export-conversation skill will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-11-21
+
+### Added
+- Secret redaction gate (`scripts/redact.mjs`) with check and write modes
+- Render manifest, HTML review gallery, diagram lint and layout warnings
+- Export validator for structure, coverage, secrets and render evidence
+- Incremental marker-based merge that preserves manual blocks
+- Multi-root installer with `--check` drift detection
+- Local image copying with alt-text filling (`scripts/assets.mjs`)
+- Release consistency checks and CI matrix
+
+### Changed
+- Skill workflow now runs redact, render, validate and merge as Steps 4a-4d
+- Renderer supports `--offline`, `--mmdc`, `--timeout`, `--jobs`, `--strict-layout`, `--strict-lint` and `--max-diagrams`
+
 ## [2.1.0] - 2026-11-21
 
 ### Added
@@ -95,7 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🌐 Export to common documentation platforms
 
 ### Community Requests
-- Open an [issue](https://github.com/YOUR_USERNAME/export-conversation-skill/issues) to suggest features!
+- Open an [issue](https://github.com/Alot1z/export-conversation-skill/issues) to suggest features!
 
 ---
 

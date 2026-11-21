@@ -23,6 +23,17 @@
 
 🔒 **Privacy-Aware** - Sanitizes sensitive information (API keys, passwords)
 
+## Verification, safety and continuity (2.2.0)
+
+The skill no longer trusts a fence count. Every export passes four gates:
+
+- **Redaction first** - `scripts/redact.mjs` scans for private keys, provider tokens, credential assignments, bearer tokens and credential URLs. Check mode reports line and type only, never the value; `--write` replaces matches with `[REDACTED]`.
+- **Real rendering** - `scripts/render-mermaid.mjs` extracts every block, lints the diagram type and labels, renders SVG and PNG, measures the canvas, flags extreme aspect ratios and missing text, and writes a JSON manifest. `--gallery` builds an HTML review page.
+- **Document validation** - `scripts/validate-export.mjs` checks front matter, required sections, message markers, coverage, secrets and the render manifest.
+- **Incremental updates** - `scripts/merge-export.mjs` merges a fresh export into an existing document without duplicating messages and preserves `<!-- export:manual:... -->` blocks.
+
+Supporting tools: `scripts/install-skill.mjs` installs into every detected agent root and reports drift with `--check`; `scripts/assets.mjs` copies local images and fills alt text; `scripts/validate-release.mjs` checks versions, manifest, docs and plugin metadata.
+
 ## Quick Start
 
 ### Installation
@@ -39,7 +50,7 @@ Once this plugin is available in a marketplace:
 
 1. **Clone or download this repository:**
    ```bash
-   git clone https://github.com/akoserwal/export-conversation-skill.git
+   git clone https://github.com/Alot1z/export-conversation-skill.git
    ```
 
 2. **Load the plugin:**
@@ -242,9 +253,18 @@ Inspect the PNGs for clipped labels, overlapping tags and extreme aspect ratios 
 ```
 export-conversation-skill/
 ├── skills/export/
-│   ├── SKILL.md            # Skill definition and instructions
+│   ├── SKILL.md                 # Export workflow (Steps 1-5)
+│   ├── skill-manifest.json      # Version and installable files
 │   └── scripts/
-│       └── render-mermaid.mjs  # Mermaid renderer and validator
+│       ├── render-mermaid.mjs   # Render, lint, manifest, gallery
+│       ├── redact.mjs           # Secret and path gate
+│       ├── merge-export.mjs     # Incremental merge
+│       ├── validate-export.mjs  # Document validator
+│       ├── install-skill.mjs    # Multi-root install and drift check
+│       ├── assets.mjs           # Local images and alt text
+│       └── validate-release.mjs # Release consistency
+├── tests/                  # Unit and CLI tests
+├── .github/workflows/      # CI and tag verification
 ├── examples/               # Example exports
 ├── README.md               # This file
 └── LICENSE                 # MIT License
@@ -333,7 +353,7 @@ Contributions are welcome! Here's how:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/export-conversation-skill.git
+git clone https://github.com/Alot1z/export-conversation-skill.git
 
 # Create symlink for development
 ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
@@ -344,6 +364,13 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 ```
 
 ## Changelog
+
+### v2.2.0 - 2026-11-21
+- Redaction gate for secrets, credentials and optional paths/emails
+- Step 4b render validation with manifest, gallery, lint and layout warnings
+- Step 4c document validator and incremental Step 4d merge
+- Multi-root installer with drift detection
+- Cross-platform tests and CI matrix
 
 ### v2.0.0 - 2026-04-08
 - ✨ Added comprehensive Mermaid diagram support
@@ -360,6 +387,17 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 - ✨ Flexible output naming (timestamp or custom)
 - 🔒 Sensitive data sanitization
 
+## Development
+
+```bash
+node --test "tests/*.test.mjs"          # unit and CLI tests
+RUN_MERMAID=1 node --test tests/render.test.mjs  # real Mermaid render (slow)
+node skills/export/scripts/validate-release.mjs  # versions, manifest, docs
+node skills/export/scripts/install-skill.mjs --check
+```
+
+CI runs the test suite on Ubuntu, Windows and macOS with Node 20 and 22, plus a real render job. The release workflow verifies a `v*` tag without publishing anything.
+
 ## License
 
 MIT License - see [LICENSE](./LICENSE) file for details
@@ -370,8 +408,8 @@ Built for [Claude Code](https://claude.ai/code) by Anthropic
 
 ## Support
 
-- 🐛 [Report Issues](https://github.com/YOUR_USERNAME/export-conversation-skill/issues)
-- 💡 [Request Features](https://github.com/YOUR_USERNAME/export-conversation-skill/issues/new)
+- 🐛 [Report Issues](https://github.com/Alot1z/export-conversation-skill/issues)
+- 💡 [Request Features](https://github.com/Alot1z/export-conversation-skill/issues/new)
 - 📖 [Claude Code Documentation](https://docs.anthropic.com/claude/docs/claude-code)
 
 ---

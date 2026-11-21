@@ -7,14 +7,14 @@ Get up and running with export-conversation in under 2 minutes!
 ### Option 1: One-Line Install (Recommended)
 
 ```bash
-git clone https://github.com/akoserwal/export-conversation-skill.git && cd export-conversation-skill && ./install.sh
+git clone https://github.com/Alot1z/export-conversation-skill.git && cd export-conversation-skill && ./install.sh
 ```
 
 ### Option 2: Manual Install
 
 ```bash
 # Clone the repository
-git clone https://github.com/akoserwal/export-conversation-skill.git
+git clone https://github.com/Alot1z/export-conversation-skill.git
 
 # Create symlink to Claude skills directory
 ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
@@ -193,12 +193,12 @@ Diagrams are only included for architectural discussions. Try:
 - 📖 Read the full [README.md](./README.md) for advanced features
 - 🔍 Check out [example exports](./examples/) for inspiration
 - 💡 See [CONTRIBUTING.md](./CONTRIBUTING.md) to help improve the skill
-- 🐛 Report issues or request features on [GitHub](https://github.com/YOUR_USERNAME/export-conversation-skill/issues)
+- 🐛 Report issues or request features on [GitHub](https://github.com/Alot1z/export-conversation-skill/issues)
 
 ## Need Help?
 
 - 📚 Read the [README](./README.md)
-- 💬 Start a [Discussion](https://github.com/YOUR_USERNAME/export-conversation-skill/discussions)
-- 🐛 Open an [Issue](https://github.com/YOUR_USERNAME/export-conversation-skill/issues)
+- 💬 Start a [Discussion](https://github.com/Alot1z/export-conversation-skill/discussions)
+- 🐛 Open an [Issue](https://github.com/Alot1z/export-conversation-skill/issues)
 
 Happy exporting! 🚀

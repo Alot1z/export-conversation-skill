@@ -36,3 +36,8 @@ conversation-export-*.md
 
 # Logs
 *.log
+
+# Local render and dependency output
+node_modules/
+target/
+*.tmp-*

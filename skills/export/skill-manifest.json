@@ -1,0 +1,16 @@
+{
+  "name": "export-conversation",
+  "version": "2.2.0",
+  "files": [
+    "SKILL.md",
+    "scripts/render-mermaid.mjs",
+    "scripts/redact.mjs",
+    "scripts/merge-export.mjs",
+    "scripts/validate-export.mjs",
+    "scripts/install-skill.mjs",
+    "scripts/assets.mjs",
+    "scripts/coverage.mjs",
+    "scripts/run-evals.mjs",
+    "scripts/validate-release.mjs"
+  ]
+}
