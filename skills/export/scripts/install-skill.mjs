@@ -49,6 +49,12 @@ function resolveSource(file) {
   return join(REPO_ROOT, MANIFEST.sourceRoots?.[file] ?? file);
 }
 
+function sourceContent(file) {
+  const content = readFileSync(resolveSource(file));
+  if (/\.(?:png|jpe?g|gif|webp|zip|ico)$/i.test(file)) return content;
+  return Buffer.from(content.toString("utf8").replace(/\r\n/g, "\n"));
+}
+
 function defaultTargets() {
   const roots = [
     ".claude/skills/export-conversation",
@@ -129,7 +135,7 @@ function inspect(target) {
   const files = RUNTIME.map((file) => {
     const current = readTargetFile(target, file);
     if (!current) return { file, status: "missing" };
-    const expected = readFileSync(resolveSource(file));
+    const expected = sourceContent(file);
     return { file, status: hash(current) === hash(expected) ? "ok" : "different" };
   });
   const stale = DEV.filter((file) => existsSync(join(target, file))).map((file) => ({
@@ -148,7 +154,7 @@ function inspect(target) {
 
 function install(target, prune) {
   for (const file of RUNTIME) {
-    writeAtomic(join(target, file), readFileSync(resolveSource(file)));
+    writeAtomic(join(target, file), sourceContent(file));
   }
 
   const pruned = [];

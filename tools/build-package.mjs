@@ -37,6 +37,12 @@ function sourceFor(file) {
   return path.join(ROOT, MANIFEST.sourceRoots?.[file] ?? file);
 }
 
+function normalizedContent(file) {
+  const content = fs.readFileSync(sourceFor(file));
+  if (/\.(?:png|jpe?g|gif|webp|zip|ico)$/i.test(file)) return content;
+  return Buffer.from(content.toString("utf8").replace(/\r\n/g, "\n"));
+}
+
 const options = parseArgs(process.argv.slice(2));
 const out = path.resolve(options.out ?? process.env.EXPORT_CONVERSATION_PACKAGE ?? path.join(ROOT, "..", ".account-package"));
 const now =
@@ -58,7 +64,7 @@ const files = [];
 for (const file of [...MANIFEST.files].sort()) {
   const source = sourceFor(file);
   if (!fs.existsSync(source)) throw new Error(`manifest file is missing: ${file} (${source})`);
-  const content = fs.readFileSync(source);
+  const content = normalizedContent(file);
   const target = path.join(out, file);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, content);
