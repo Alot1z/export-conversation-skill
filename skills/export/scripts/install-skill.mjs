@@ -31,14 +31,23 @@ import {
   writeFileSync,
 } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-export const VERSION = "2.2.1";
+export const VERSION = "3.0.0";
 const SOURCE = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const REPO_ROOT = resolve(SOURCE, "../..");
 const MANIFEST = JSON.parse(readFileSync(join(SOURCE, "skill-manifest.json"), "utf8"));
-const RUNTIME = MANIFEST.files;
-const DEV = MANIFEST.devFiles ?? [];
+let RUNTIME = MANIFEST.files;
+let DEV = MANIFEST.devFiles ?? [];
+let PACKAGE_ROOT = null;
+let PACKAGE_MANIFEST = null;
 const HOME = process.env.USERPROFILE || process.env.HOME || "";
+
+function resolveSource(file) {
+  if (PACKAGE_ROOT) return join(PACKAGE_ROOT, file);
+  return join(REPO_ROOT, MANIFEST.sourceRoots?.[file] ?? file);
+}
 
 function defaultTargets() {
   const roots = [
@@ -120,7 +129,7 @@ function inspect(target) {
   const files = RUNTIME.map((file) => {
     const current = readTargetFile(target, file);
     if (!current) return { file, status: "missing" };
-    const expected = readFileSync(join(SOURCE, file));
+    const expected = readFileSync(resolveSource(file));
     return { file, status: hash(current) === hash(expected) ? "ok" : "different" };
   });
   const stale = DEV.filter((file) => existsSync(join(target, file))).map((file) => ({
@@ -139,7 +148,7 @@ function inspect(target) {
 
 function install(target, prune) {
   for (const file of RUNTIME) {
-    writeAtomic(join(target, file), readFileSync(join(SOURCE, file)));
+    writeAtomic(join(target, file), readFileSync(resolveSource(file)));
   }
 
   const pruned = [];
@@ -177,6 +186,7 @@ function parseArgs(argv) {
     roots: [],
     targets: [],
     projects: [],
+    packages: [],
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -194,6 +204,7 @@ function parseArgs(argv) {
     else if (arg === "--root" || arg.startsWith("--root=")) options.roots.push(arg.startsWith("--root=") ? arg.slice("--root=".length) : value());
     else if (arg === "--target" || arg.startsWith("--target=")) options.targets.push(arg.startsWith("--target=") ? arg.slice("--target=".length) : value());
     else if (arg === "--project" || arg.startsWith("--project=")) options.projects.push(arg.startsWith("--project=") ? arg.slice("--project=".length) : value());
+    else if (arg === "--package" || arg.startsWith("--package=")) options.packages.push(arg.startsWith("--package=") ? arg.slice("--package=".length) : value());
     else throw new Error(`Unknown option: ${arg}`);
   }
   return options;
@@ -201,7 +212,7 @@ function parseArgs(argv) {
 
 function main() {
   const usage =
-    "Usage: node install-skill.mjs [--check] [--dry-run] [--json] [--no-prune] [--root <skills-root>] [--target <exact-dir>] [--project <project-root>] [--force]";
+    "Usage: node install-skill.mjs [--check] [--dry-run] [--json] [--no-prune] [--root <skills-root>] [--target <exact-dir>] [--project <project-root>] [--package <dir>] [--force]";
   let options;
   try {
     options = parseArgs(process.argv.slice(2));
@@ -213,6 +224,36 @@ function main() {
   if (options.help) {
     console.log(usage);
     return;
+  }
+
+  if (options.packages.length > 1) {
+    console.error("Only one --package directory may be supplied");
+    process.exit(1);
+  }
+  if (options.packages.length === 1) {
+    try {
+      PACKAGE_ROOT = resolve(options.packages[0]);
+      PACKAGE_MANIFEST = JSON.parse(readFileSync(join(PACKAGE_ROOT, "package-manifest.json"), "utf8"));
+      for (const entry of PACKAGE_MANIFEST.files) {
+        const target = join(PACKAGE_ROOT, entry.path);
+        if (!existsSync(target)) throw new Error(`package file is missing: ${entry.path}`);
+        if (hash(readFileSync(target)) !== entry.sha256) {
+          throw new Error(`package file failed verification: ${entry.path}`);
+        }
+      }
+      const head = execFileSync("git", ["-C", REPO_ROOT, "rev-parse", "HEAD"], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim();
+      if (!head || PACKAGE_MANIFEST.source_commit !== head) {
+        throw new Error(`package commit ${PACKAGE_MANIFEST.source_commit} does not match HEAD ${head}`);
+      }
+      RUNTIME = PACKAGE_MANIFEST.files.map((entry) => entry.path);
+      DEV = [];
+    } catch (error) {
+      console.error(`--package verification failed: ${error.message}`);
+      process.exit(1);
+    }
   }
 
   let explicit;
@@ -250,8 +291,9 @@ function main() {
   const failing = results.filter((result) => !["ok", "installed"].includes(result.status));
   const report = {
     skill: MANIFEST.name,
-    version: MANIFEST.version,
+    version: PACKAGE_MANIFEST?.version ?? MANIFEST.version,
     mode: options.check ? "check" : options.dryRun ? "dry-run" : "install",
+    package: PACKAGE_ROOT ? { path: PACKAGE_ROOT, source_commit: PACKAGE_MANIFEST.source_commit } : null,
     ok: failing.length === 0,
     targets: results,
   };

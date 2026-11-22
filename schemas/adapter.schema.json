@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Alot1z/export-conversation-skill/schemas/adapter.schema.json",
+  "title": "Harness adapter contract",
+  "type": "object",
+  "required": ["id", "version", "harness", "kind", "capabilities", "capture"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "harness": { "type": "string" },
+    "kind": { "enum": ["native", "official-export", "generic-import"] },
+    "evidence": { "type": "string" },
+    "capabilities": {
+      "type": "object",
+      "required": ["user", "assistant", "system", "toolCalls", "toolResults", "attachments", "timestamps", "originalIds", "pagination", "fullHistory"],
+      "additionalProperties": { "type": "boolean" }
+    },
+    "discover": { "type": "function" },
+    "capture": { "type": "function" }
+  }
+}

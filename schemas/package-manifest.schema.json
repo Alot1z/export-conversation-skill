@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Alot1z/export-conversation-skill/schemas/package-manifest.schema.json",
+  "title": "Reproducible skill package manifest",
+  "type": "object",
+  "required": ["schema_version", "name", "version", "source_commit", "generated_at", "files"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "name": { "const": "export-conversation" },
+    "version": { "type": "string" },
+    "source_commit": { "type": "string", "pattern": "^[0-9a-f]{7,64}$" },
+    "generated_at": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "bytes", "sha256"],
+        "properties": {
+          "path": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    }
+  }
+}

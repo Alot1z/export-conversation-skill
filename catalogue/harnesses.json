@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-11-22",
+  "note": "Offline catalogue. No network refresh is performed in 3.0.0; a refresh interface is reserved.",
+  "harnesses": [
+    {
+      "id": "claude-code",
+      "display_name": "Claude Code",
+      "adapter": "claude-code",
+      "kind": "native",
+      "evidence": "live structure observed",
+      "sources": ["~/.claude/projects/**/*.jsonl"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": false,
+        "toolCalls": true,
+        "toolResults": true,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": true,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Only JSONL session files are read", "Thinking blocks are kept as records, not reinterpreted"]
+    },
+    {
+      "id": "codex",
+      "display_name": "Codex",
+      "adapter": "codex",
+      "kind": "native",
+      "evidence": "fixture only",
+      "sources": ["~/.codex/sessions/**/*.jsonl"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": false,
+        "toolCalls": true,
+        "toolResults": true,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": false,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Session layout verified against a fixture, not a live installation"]
+    },
+    {
+      "id": "gemini-cli",
+      "display_name": "Gemini CLI",
+      "adapter": "gemini-cli",
+      "kind": "native",
+      "evidence": "official JSONL format",
+      "sources": ["~/.gemini/tmp/*/chats/session-*.jsonl"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": false,
+        "toolCalls": true,
+        "toolResults": false,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": true,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Chat recording must be enabled in Gemini CLI"]
+    },
+    {
+      "id": "chatgpt-export",
+      "display_name": "ChatGPT data export",
+      "adapter": "chatgpt-export",
+      "kind": "official-export",
+      "evidence": "synthetic ZIP fixture",
+      "sources": ["chatgpt-export.zip"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": true,
+        "toolCalls": false,
+        "toolResults": false,
+        "attachments": true,
+        "timestamps": true,
+        "originalIds": true,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Only the active branch is rendered; alternative nodes are counted", "ZIP64 exports are rejected"]
+    },
+    {
+      "id": "openhands",
+      "display_name": "OpenHands transcript",
+      "adapter": "openhands-transcript",
+      "kind": "official-export",
+      "evidence": "fixture",
+      "sources": ["transcript.md", "transcript.html"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": false,
+        "toolCalls": false,
+        "toolResults": false,
+        "attachments": false,
+        "timestamps": false,
+        "originalIds": false,
+        "pagination": false,
+        "fullHistory": false
+      },
+      "limitations": ["Markdown and HTML transcripts do not expose tool events"]
+    },
+    {
+      "id": "freebuff-thread-context",
+      "display_name": "Freebuff thread context",
+      "adapter": "freebuff-thread-context",
+      "kind": "native",
+      "evidence": "context payload only",
+      "sources": ["thread context JSON or Markdown"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": false,
+        "toolCalls": false,
+        "toolResults": false,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": false,
+        "pagination": false,
+        "fullHistory": false
+      },
+      "limitations": ["A thread mention is required for the original transcript", "Context payloads omit tool events"]
+    },
+    {
+      "id": "generic-json",
+      "display_name": "Generic JSON",
+      "adapter": "generic-json",
+      "kind": "generic-import",
+      "evidence": "implemented",
+      "sources": ["*.json"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": true,
+        "toolCalls": false,
+        "toolResults": false,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": true,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Requires a messages array"]
+    },
+    {
+      "id": "generic-jsonl",
+      "display_name": "Generic JSON Lines",
+      "adapter": "generic-jsonl",
+      "kind": "generic-import",
+      "evidence": "implemented",
+      "sources": ["*.jsonl", "*.ndjson"],
+      "capabilities": {
+        "user": true,
+        "assistant": true,
+        "system": true,
+        "toolCalls": false,
+        "toolResults": false,
+        "attachments": false,
+        "timestamps": true,
+        "originalIds": true,
+        "pagination": false,
+        "fullHistory": true
+      },
+      "limitations": ["Malformed lines are preserved as UNKNOWN records"]
+    }
+  ]
+}

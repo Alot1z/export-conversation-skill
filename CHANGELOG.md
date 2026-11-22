@@ -5,14 +5,39 @@ All notable changes to the export-conversation skill will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-11-22
+
+### Added
+- Dependency-free canonical conversation model (schema 2) with immutable hashed raw records, deterministic derived views, branches, tool pairing, attachments and provenance classes.
+- Ingest engine with byte-based format detection, JSON/JSONL/Markdown/HTML readers, a full ZIP reader (central directory, stored/deflate, CRC-32, traversal/encryption/ZIP64/size rejection) and read-only SQLite capability detection.
+- Transactional `.export` store with staged hashes, per-file backups, a stage journal, crash recovery, liveness-checked locking and immutable revision chains.
+- Three independent coverage dimensions (`source`, `selection`, `export`) plus an explicit source boundary; free-text "complete" claims are no longer accepted as coverage.
+- Dimensioned verification (`schema`, `raw_integrity`, `view_determinism`, `source_boundary`, coverage, `provenance`, `revisions`, `attachments`, `tool_events`, `timestamps`, `index`, `migration`, `redaction`, `render_manifest`, `publication_boundary`).
+- Offline harness adapters for Claude Code, Codex, Gemini CLI, ChatGPT exports, OpenHands transcripts, Freebuff thread context and generic JSON/JSONL, with evidence classes and a catalogue.
+- `scripts/conversation.mjs` CLI (doctor, adapters, catalogue, discover, import, list, get, search, verify, export, index, migrate, recover) and a dependency-free MCP stdio server with 11 tools.
+- Schema-1 migration with verified backups, rollback, idempotency and stable re-import identity.
+- `tools/build-package.mjs` reproducible packages bound to a commit, `tools/bench.mjs`, canonical/adapter/package JSON schemas and architecture, adapter, security and migration documentation.
+
+### Changed
+- Runtime package is now a self-contained tree (`SKILL.md`, `core/`, `adapters/`, `scripts/`, `schemas/`, `catalogue/`) with source mappings; installed roots receive the full core.
+- Installer verifies a package manifest and its commit with `--package`, and reports the full runtime file set.
+- Version surfaces, plugin metadata and release validation now describe 3.0.0.
+
 ## [2.2.1] - 2026-11-21
+
+### Added
+- Project-scoped exports under `<project>/.export/`, with focused and archive modes, stable project/conversation identities, revisions, deterministic project indexes and integrity verification.
+- `scripts/project-export.mjs` with `resolve`, `init`, `add`, `filter`, `list`, `get`, `archive`, `overview` and `verify`.
+- `schemas/project-export.schema.json` for machine-readable conversation metadata.
+- `docs/PROJECT-EXPORTS.md` and project workflow steps in `SKILL.md`, `README.md` and `QUICKSTART.md`.
 
 ### Fixed
 - Redaction now scans every line, including lines that already contain a `[REDACTED]` placeholder; multiple secrets on one line and private-key-plus-token lines are handled.
 - Incremental merge now preserves manual blocks that exist only in the old export instead of dropping them.
+- `project-export.mjs add --update` preserves the existing title, tags, coverage, mode and scope unless the corresponding flag is supplied.
 
 ### Changed
-- `skill-manifest.json` separates seven runtime entries from `devFiles`; installed roots no longer receive `install-skill.mjs`, `run-evals.mjs` or `validate-release.mjs`.
+- `skill-manifest.json` separates nine runtime entries from `devFiles`; installed roots no longer receive `install-skill.mjs`, `run-evals.mjs` or `validate-release.mjs`.
 - Installer detects stale development files, prunes only known manifest-owned files, supports `--no-prune`, and adds safe `--project <root>` installation under `.agents/skills`.
 - Release validation now understands `devFiles`, rejects runtime/development overlap, and reports unclassified scripts.
 - Runtime `SKILL.md` no longer references development-only maintenance commands.

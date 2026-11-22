@@ -23,7 +23,39 @@
 
 🔒 **Privacy-Aware** - Sanitizes sensitive information (API keys, passwords)
 
-## Verification, safety and continuity (2.2.1)
+## 3.0.0 - harness-agnostic core
+
+Version 3.0.0 turns the skill into a dependency-free conversation data platform. The core does not import a harness SDK, an LLM client, an MCP SDK or a paid service. Harness support is an optional adapter layer.
+
+```bash
+node scripts/conversation.mjs doctor
+node scripts/conversation.mjs adapters
+node scripts/conversation.mjs discover --root ~/.claude
+node scripts/conversation.mjs import --adapter claude-code --input session.jsonl --project "E:\Projects\Anvil"
+node scripts/conversation.mjs list --project "E:\Projects\Anvil"
+node scripts/conversation.mjs search --text "coverage" --project "E:\Projects\Anvil"
+node scripts/conversation.mjs verify --all --project "E:\Projects\Anvil"
+node scripts/conversation.mjs export --id <id> --format md --project "E:\Projects\Anvil"
+node scripts/mcp-server.mjs --self-test
+```
+
+Each conversation lives under `<project>/.export/conversations/<id>/` with immutable `raw/records.jsonl`, a deterministic `view/conversation.json`, a capture ledger, a hash-chained `revisions/` directory and transactional recovery. Writes are staged, backed up, journaled and renamed; interrupted writes are rolled back by `conversation recover`.
+
+Coverage has three independent dimensions - `source`, `selection` and `export` - plus an explicit source boundary. `COMPLETE` is only reported relative to that boundary. Legacy free-text "complete" claims are migrated to `UNKNOWN` source coverage with `RECONSTRUCTED` provenance.
+
+| Adapter | Kind | Evidence |
+| --- | --- | --- |
+| `claude-code` | native | live JSONL structure observed |
+| `codex` | native | fixture-verified |
+| `gemini-cli` | native | official session JSONL format |
+| `chatgpt-export` | official export | synthetic ZIP tree fixture |
+| `openhands-transcript` | official export | fixture-verified Markdown/HTML |
+| `freebuff-thread-context` | native context | context payload only |
+| `generic-json`, `generic-jsonl` | generic import | implemented and tested |
+
+Adapters never install a harness, bypass authentication or read a private store without an explicit readable path. A context payload is never labelled complete history.
+
+## Verification, safety and continuity (2.2.1 foundation)
 
 The skill no longer trusts a fence count. Every export passes four gates:
 
@@ -33,6 +65,42 @@ The skill no longer trusts a fence count. Every export passes four gates:
 - **Incremental updates** - `scripts/merge-export.mjs` merges a fresh export into an existing document without duplicating messages and preserves `<!-- export:manual:... -->` blocks.
 
 Supporting tools: `scripts/install-skill.mjs` installs into every detected agent root and reports drift with `--check`; `scripts/assets.mjs` copies local images and fills alt text; `scripts/validate-release.mjs` checks versions, manifest, docs and plugin metadata.
+
+## Project-scoped exports (`.export`)
+
+Exports can belong to a project instead of being written next to source files:
+
+```text
+<project>/.export/conversations/<conversation-id>/export.md
+```
+
+Destination priority is explicit `--destination`, explicit `--project`, then the actual detected project root. The resolver uses Git or a project marker and refuses to guess; it does not default to the open chat's project, the home directory or a temporary cwd.
+
+```bash
+# Resolve without writing
+node skills/export/scripts/project-export.mjs resolve --destination "E:\Projects\Anvil"
+
+# Focused export: only this conversation, no project index
+node skills/export/scripts/project-export.mjs add \
+  --source focused-export.md --destination "E:\Projects\Anvil" \
+  --conversation-id conv-redaction-bug --title "Redaction bug"
+
+# Deliberate archive for multiple conversations
+node skills/export/scripts/project-export.mjs add \
+  --source verified.md --destination "E:\Projects\Anvil" \
+  --archive --conversation-id conv-architecture --title "Architecture"
+
+# Continue one conversation without touching the others
+node skills/export/scripts/project-export.mjs add \
+  --source updated.md --destination "E:\Projects\Anvil" \
+  --update --conversation-id conv-architecture
+
+# Inspect and verify
+node skills/export/scripts/project-export.mjs list --destination "E:\Projects\Anvil"
+node skills/export/scripts/project-export.mjs verify --destination "E:\Projects\Anvil"
+```
+
+A focused export writes only its conversation directory. `project.json`, `index.md` and `README.md` appear only after a deliberate archive initialisation. Each conversation has stable identity, metadata, revision and a SHA-256 integrity hash. `filter` selects message ranges into an explicitly partial export; `overview` generates a project summary without modifying source exports. See [docs/PROJECT-EXPORTS.md](docs/PROJECT-EXPORTS.md).
 
 ## Quick Start
 
@@ -250,27 +318,34 @@ Inspect the PNGs for clipped labels, overlapping tags and extreme aspect ratios 
 
 ## File Structure
 
-```
+```text
 export-conversation-skill/
-├── skills/export/
-│   ├── SKILL.md                 # Export workflow (Steps 1-5)
-│   ├── skill-manifest.json      # Version and installable files
-│   └── scripts/
-│       ├── render-mermaid.mjs   # Render, lint, manifest, gallery
-│       ├── redact.mjs           # Secret and path gate
-│       ├── merge-export.mjs     # Incremental merge
-│       ├── validate-export.mjs  # Document validator
-│       ├── install-skill.mjs    # Multi-root install and drift check
-│       ├── assets.mjs           # Local images and alt text
-│       └── validate-release.mjs # Release consistency
-├── tests/                  # Unit and CLI tests
-├── .github/workflows/      # CI and tag verification
-├── examples/               # Example exports
-├── README.md               # This file
-└── LICENSE                 # MIT License
-    ├── simple-export.md
-    ├── with-diagrams.md
-    └── architecture-session.md
+├── core/                        # Dependency-free canonical engine
+│   ├── canonical.mjs            # Schema 2 model and hashing
+│   ├── store.mjs                # Transactions, locks, revisions, recovery
+│   ├── coverage.mjs             # Three dimensions plus source boundary
+│   ├── verify.mjs               # Dimensioned verification
+│   ├── ingest/                  # ZIP, JSON, JSONL, Markdown, HTML, SQLite
+│   ├── render/                  # Markdown, JSON, HTML
+│   └── query.mjs, reconstruct.mjs, migrate.mjs, registry.mjs, service.mjs
+├── adapters/                    # Optional harness data sources
+├── catalogue/harnesses.json     # Offline harness catalogue
+├── schemas/                     # Canonical, adapter and package schemas
+├── scripts/
+│   ├── conversation.mjs         # CLI
+│   ├── mcp-server.mjs           # Dependency-free MCP stdio server
+│   ├── render-mermaid.mjs       # Render, lint, manifest, gallery
+│   ├── redact.mjs               # Secret gate
+│   ├── merge-export.mjs         # Incremental merge
+│   ├── validate-export.mjs      # Document validator
+│   ├── project-export.mjs       # Legacy .export compatibility
+│   └── assets.mjs
+├── skills/export/               # Skill instructions and manifest
+├── tools/                       # build-package.mjs, bench.mjs
+├── tests/                       # Unit, crash, adapter, CLI and MCP tests
+├── docs/                        # Architecture, adapters, security, migration
+├── README.md
+└── LICENSE
 ```
 
 ## Advanced Tips
@@ -365,12 +440,21 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 
 ## Changelog
 
+### v3.0.0 - 2026-11-22
+
+- Dependency-free canonical core with immutable raw records, deterministic views, transactional storage, recovery, revisions and dimensioned verification.
+- Adapter layer for Claude Code, Codex, Gemini CLI, ChatGPT exports, OpenHands transcripts, Freebuff context and generic JSON/JSONL.
+- CLI and MCP surfaces, schema-1 migration with verified backups and a reproducible package builder.
+- Three independent coverage dimensions plus an explicit source boundary; legacy "complete" claims are no longer trusted.
+
 ### v2.2.1 - 2026-11-21
 
 - Redaction scans mixed placeholder/secret lines and is idempotent.
 - Merge preserves manual blocks found only in the old export.
-- Installed roots receive seven runtime files only; stale dev tooling is reported and pruned.
+- Installed roots receive runtime files only; stale dev tooling is reported and pruned.
 - Added safe project installation with `--project`.
+- Added project-scoped `.export` storage with destination resolution, focused and archive modes, stable conversation identity, filtering, index, update/merge, archive, overview and integrity verification (`scripts/project-export.mjs`).
+- Added `schemas/project-export.schema.json` and [project export documentation](docs/PROJECT-EXPORTS.md).
 
 ### v2.2.0 - 2026-11-21
 - Redaction gate for secrets, credentials and optional paths/emails
@@ -397,9 +481,12 @@ ln -s $(pwd)/export-conversation-skill ~/.claude/skills/export-conversation
 ## Development
 
 ```bash
-node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs          # unit and CLI tests
-RUN_MERMAID=1 node --test tests/render.test.mjs  # real Mermaid render (slow)
-node skills/export/scripts/validate-release.mjs  # versions, manifest, docs
+node --test                                        # all unit, crash, adapter, CLI and MCP tests
+RUN_MERMAID=1 node --test tests/render-mermaid.test.mjs  # real Mermaid render (slow)
+node tools/bench.mjs --profile=smoke               # local pipeline measurements
+node scripts/conversation.mjs doctor
+node skills/export/scripts/validate-release.mjs
+node tools/build-package.mjs --clean --out ../.account-package
 node skills/export/scripts/install-skill.mjs --check
 ```
 

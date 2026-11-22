@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Alot1z/export-conversation-skill/schemas/project-export.schema.json",
+  "title": "Project-scoped conversation export metadata",
+  "description": "Authoritative metadata for one conversation stored under <project>/.export/conversations/<conversation-id>/metadata.json.",
+  "type": "object",
+  "required": ["schema_version", "project", "conversation", "export", "scope"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "project": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^proj-[a-z0-9-]{4,80}$" },
+        "name": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "conversation": {
+      "type": "object",
+      "required": ["id", "title", "created_at", "updated_at", "coverage", "status", "identity_method"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^conv-[a-z0-9._-]{2,79}$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "session": { "type": ["string", "null"] },
+        "export_id": { "type": ["string", "null"] },
+        "created_at": { "type": "string", "minLength": 1 },
+        "updated_at": { "type": "string", "minLength": 1 },
+        "coverage": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "status": { "enum": ["active", "archived"] },
+        "identity_method": { "enum": ["provided", "front-matter-export-id", "content-hash"] }
+      },
+      "additionalProperties": false
+    },
+    "export": {
+      "type": "object",
+      "required": ["file", "revision", "sha256", "bytes", "last_message", "generator", "manifest"],
+      "properties": {
+        "file": { "const": "export.md" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "last_message": { "type": "integer", "minimum": 1 },
+        "generator": { "type": "string", "minLength": 1 },
+        "manifest": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": ["mode", "project", "filter", "included_messages", "excluded", "history_gaps"],
+      "properties": {
+        "mode": { "enum": ["focused", "archive"] },
+        "project": { "type": "string", "minLength": 1 },
+        "filter": { "type": "string", "minLength": 1 },
+        "included_messages": { "type": "string", "minLength": 1 },
+        "excluded": { "type": "string" },
+        "history_gaps": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "destination": {
+      "type": "object",
+      "required": ["project_root_hint"],
+      "properties": {
+        "project_root_hint": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

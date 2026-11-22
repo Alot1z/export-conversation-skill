@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Alot1z/export-conversation-skill/schemas/canonical.schema.json",
+  "title": "Canonical conversation view",
+  "type": "object",
+  "required": ["schema_version", "conversation", "source", "boundary", "records", "coverage"],
+  "properties": {
+    "schema_version": { "const": 2 },
+    "conversation": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" },
+        "active_branch": { "type": "string" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["adapter", "kind"],
+      "properties": {
+        "adapter": { "type": "string" },
+        "version": { "type": "string" },
+        "harness": { "type": "string" },
+        "kind": { "enum": ["native", "official-export", "generic-import"] },
+        "ref": { "type": ["string", "null"] },
+        "evidence": { "type": "string" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "required": ["kind", "total_known", "records_available", "history_complete"],
+      "properties": {
+        "kind": { "type": "string" },
+        "total_known": { "type": "boolean" },
+        "total_records": { "type": ["integer", "null"] },
+        "records_available": { "type": "integer", "minimum": 0 },
+        "records_captured": { "type": "integer", "minimum": 0 },
+        "records_unavailable": { "type": "integer", "minimum": 0 },
+        "history_complete": { "type": "boolean" }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "seq", "role", "type", "content", "provenance", "hash"],
+        "properties": {
+          "id": { "type": "string" },
+          "seq": { "type": "integer", "minimum": 0 },
+          "role": { "type": "string" },
+          "type": { "type": "string" },
+          "content": { "type": "string" },
+          "timestamp": { "type": ["string", "null"] },
+          "provenance": {
+            "enum": ["ORIGINAL", "IMPORTED", "RECONSTRUCTED", "DERIVED", "SUMMARISED", "TRANSFORMED", "REDACTED", "UNKNOWN"]
+          },
+          "status": { "type": ["string", "null"] },
+          "unknown": { "type": "boolean" },
+          "hash": { "type": "string" }
+        }
+      }
+    },
+    "tool_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["callId", "status"],
+        "properties": {
+          "callId": { "type": "string" },
+          "status": { "enum": ["complete", "missing_result", "orphan_result"] }
+        }
+      }
+    },
+    "attachments": { "type": "array" },
+    "branches": { "type": "array" },
+    "coverage": {
+      "type": "object",
+      "required": ["source", "selection", "export"],
+      "properties": {
+        "source": { "$ref": "#/$defs/dimension" },
+        "selection": { "$ref": "#/$defs/dimension" },
+        "export": { "$ref": "#/$defs/dimension" }
+      }
+    }
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "required": ["status", "reason"],
+      "properties": {
+        "status": { "enum": ["COMPLETE", "PARTIAL", "UNKNOWN", "UNAVAILABLE"] },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

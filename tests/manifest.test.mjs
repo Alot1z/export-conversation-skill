@@ -12,7 +12,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, relative } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
@@ -27,6 +27,8 @@ const DEV_FILES = [
   "scripts/install-skill.mjs",
   "scripts/run-evals.mjs",
   "scripts/validate-release.mjs",
+  "tools/build-package.mjs",
+  "tools/bench.mjs",
 ];
 
 function run(args, options = {}) {
@@ -57,11 +59,15 @@ function report(result) {
 }
 
 test("manifest separates runtime files from development tooling", () => {
-  assert.equal(manifest.files.length, 7);
+  assert.equal(manifest.files.length, 44);
   assert.ok(manifest.files.includes("SKILL.md"));
-  for (const name of ["render-mermaid", "redact", "merge-export", "validate-export", "coverage", "assets"]) {
+  for (const name of ["render-mermaid", "redact", "merge-export", "validate-export", "coverage", "assets", "project-export", "conversation", "mcp-server"]) {
     assert.ok(manifest.files.includes(`scripts/${name}.mjs`), name);
   }
+  for (const file of ["core/canonical.mjs", "core/store.mjs", "core/verify.mjs", "adapters/index.mjs", "catalogue/harnesses.json"]) {
+    assert.ok(manifest.files.includes(file), file);
+  }
+  assert.ok(manifest.files.includes("schemas/project-export.schema.json"));
   assert.deepEqual(manifest.devFiles, DEV_FILES);
   for (const file of DEV_FILES) assert.ok(!manifest.files.includes(file), file);
 });
@@ -93,7 +99,10 @@ test("check mode reports stale development files without mutating them", () => {
 test("normal install prunes known stale development files and preserves unrelated files", () => {
   const target = mkdtempSync(join(tmpdir(), "export-prune-"));
   assert.equal(run(["--target", target, "--json"]).status, 0);
-  for (const file of DEV_FILES) writeFileSync(join(target, file), "stale");
+  for (const file of DEV_FILES) {
+    mkdirSync(dirname(join(target, file)), { recursive: true });
+    writeFileSync(join(target, file), "stale");
+  }
   writeFileSync(join(target, "NOTES.txt"), "user file");
 
   const installed = run(["--target", target, "--json"]);

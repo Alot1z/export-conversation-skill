@@ -39,6 +39,16 @@ If you see the file, you're ready to go! ✅
 
 That's it! You'll find `my-first-export.md` in your current directory.
 
+## Project-Scoped Export
+
+To keep conversation exports with a project, point the skill at the project root:
+
+```text
+/export-conversation --destination "E:\Projects\Anvil"
+```
+
+The export lands at `E:\Projects\Anvil\.export\conversations\<id>\export.md`, not in the project root. Focused mode creates only that conversation. Add `--archive` when the project should keep an index and multiple conversations. See [docs/PROJECT-EXPORTS.md](./docs/PROJECT-EXPORTS.md).
+
 ## Basic Usage
 
 ### Auto-Timestamped Export

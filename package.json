@@ -1,14 +1,17 @@
 {
   "name": "export-conversation-skill",
-  "version": "2.2.1",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "Export agent conversations to verified Markdown with rendered Mermaid diagrams",
+  "description": "Harness-agnostic conversation capture, canonical storage and verified export",
   "scripts": {
-    "test": "node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs tests/manifest.test.mjs",
-    "test:render": "node --test tests/render.test.mjs",
+    "test": "node --test",
+    "test:core": "node --test tests/canonical.test.mjs tests/zip.test.mjs tests/store.test.mjs tests/ingest.test.mjs tests/reconstruct.test.mjs tests/coverage.test.mjs tests/render.test.mjs tests/query.test.mjs tests/verify.test.mjs tests/adapter.test.mjs tests/independence.test.mjs tests/migration.test.mjs tests/cli.test.mjs tests/mcp.test.mjs tests/security.test.mjs",
+    "test:render": "node --test tests/render-mermaid.test.mjs",
     "validate": "node skills/export/scripts/validate-release.mjs",
-    "install:check": "node skills/export/scripts/install-skill.mjs --check"
+    "install:check": "node skills/export/scripts/install-skill.mjs --check",
+    "package": "node tools/build-package.mjs",
+    "bench": "node tools/bench.mjs --profile=smoke"
   },
   "engines": {
     "node": ">=20"

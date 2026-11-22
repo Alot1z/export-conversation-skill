@@ -1,7 +1,7 @@
 {
   "name": "export-conversation",
-  "description": "Export Claude Code conversation sessions to beautifully formatted markdown files with diagrams, statistics, and full conversation history",
-  "version": "2.2.1",
+  "description": "Harness-agnostic conversation capture, canonical .export storage, verified Markdown/JSON/HTML rendering and MCP access without npm dependencies",
+  "version": "3.0.0",
   "author": {
     "name": "Export Conversation Contributors"
   },
@@ -20,6 +20,12 @@
     "mermaid",
     "session",
     "history",
-    "archive"
+    "archive",
+    "mcp",
+    "canonical",
+    "claude-code",
+    "codex",
+    "gemini-cli",
+    "chatgpt"
   ]
 }
