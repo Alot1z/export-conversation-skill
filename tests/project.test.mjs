@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -106,7 +106,7 @@ test("resolve prefers an explicit destination over cwd", () => {
   const result = run(["resolve", "--destination", project, "--cwd", cwd, "--json"]);
   assert.equal(result.status, 0, result.stderr);
   const report = json(result);
-  assert.equal(report.project_root, project);
+  assert.equal(report.project_root, realpathSync(project));
   assert.equal(report.resolution, "explicit-destination");
 });
 
@@ -117,7 +117,7 @@ test("resolve detects the nearest project marker without selecting a temporary c
   mkdirSync(nested, { recursive: true });
   const result = run(["resolve", "--cwd", nested, "--json"]);
   assert.equal(result.status, 0, result.stderr);
-  assert.equal(json(result).project_root, project);
+  assert.equal(json(result).project_root, realpathSync(project));
   assert.equal(json(result).resolution, "project-marker");
 });
 

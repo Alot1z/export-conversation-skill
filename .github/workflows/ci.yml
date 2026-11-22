@@ -29,7 +29,8 @@ jobs:
         run: node skills/export/scripts/install-skill.mjs --package "${{ runner.temp }}/export-package" --target "${{ runner.temp }}/export-install" --json
       - name: Check the installed files
         run: node skills/export/scripts/install-skill.mjs --package "${{ runner.temp }}/export-package" --target "${{ runner.temp }}/export-install" --check --json
-      - run: node --test
+      - name: Run the full suite
+        run: node --test > test-output.log 2>&1 || node tools/ci-annotate.mjs test-output.log
       - run: node scripts/mcp-server.mjs --self-test
 
   render:
