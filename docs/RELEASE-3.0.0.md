@@ -14,7 +14,7 @@
 - Seventeen verification dimensions and project-level `git_boundary`, `transactions` and `lock` checks.
 - Eight adapters, an offline catalogue, a CLI and an 11-tool MCP stdio server.
 - Schema-1 migration with verified backups, rollback, idempotency and stable re-import identity.
-- Reproducible package builder and an installer that verifies a package manifest and commit.
+- Reproducible package builder that refuses a dirty worktree, and an installer that verifies a package manifest and commit.
 
 ## Verification observed
 
@@ -28,7 +28,8 @@
 | `node tools/bench.mjs --profile=smoke` | 8 conversations, 23 records, verify ok (import 8045 ms, search 33 ms, verify 70 ms) |
 | Repaired exports | 14 and 12 `RECONSTRUCTED` records; `coverage_source=UNKNOWN`; backups recorded |
 | Installed roots | 12/12, 44 files each, from package commit |
-| Package reproducibility | local and fresh-clone packages: same 44 file hashes, 272,950 bytes |
+| Package reproducibility | local and fresh-clone packages: same 44 file hashes, 273,031 bytes |
+| Cross-platform CI | Windows, Ubuntu and macOS × Node 20, 22 and 24: validate, clean package build, package install/check, full suite and MCP self-test |
 | Fresh-clone audit | HEAD match; `docs/development` in 0 commits; 0 tracked `.export`; 0 machine-path matches; release valid; MCP self-test pass; full suite pass |
 | Publication | force-with-lease from recorded `1f12973` to rewritten history; subsequent commits pushed normally |
 

@@ -4,27 +4,43 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [20, 22]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: node --test tests/core.test.mjs tests/cli.test.mjs tests/coverage.test.mjs tests/manifest.test.mjs
+      - run: node --version
       - run: node skills/export/scripts/validate-release.mjs
+      - name: Build package from the clean checkout
+        run: node tools/build-package.mjs --out "${{ runner.temp }}/export-package"
+      - name: Install the verified package into a temporary root
+        run: node skills/export/scripts/install-skill.mjs --package "${{ runner.temp }}/export-package" --target "${{ runner.temp }}/export-install" --json
+      - name: Check the installed files
+        run: node skills/export/scripts/install-skill.mjs --package "${{ runner.temp }}/export-package" --target "${{ runner.temp }}/export-install" --check --json
+      - run: node --test
+      - run: node scripts/mcp-server.mjs --self-test
 
   render:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: RUN_MERMAID=1 node --test tests/render.test.mjs
+      - name: Install the pinned Mermaid CLI
+        run: npm install --no-save --no-package-lock @mermaid-js/mermaid-cli@12.2.0
+      - name: Render the Mermaid fixture
+        run: RUN_MERMAID=1 node --test tests/render-mermaid.test.mjs
