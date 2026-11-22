@@ -15,7 +15,7 @@
       "required": ["user", "assistant", "system", "toolCalls", "toolResults", "attachments", "timestamps", "originalIds", "pagination", "fullHistory"],
       "additionalProperties": { "type": "boolean" }
     },
-    "discover": { "type": "function" },
-    "capture": { "type": "function" }
+    "discover": { "description": "Optional read-only discovery function." },
+    "capture": { "description": "Required function returning a canonical view." }
   }
 }
