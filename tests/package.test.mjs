@@ -72,11 +72,11 @@ test("CI matrix covers Windows, Linux and macOS across supported Node versions",
   assert.match(ci, /node --test/);
   assert.match(ci, /tools\/build-package\.mjs/);
   assert.match(ci, /tests\/render-mermaid\.test\.mjs/);
-  assert.doesNotMatch(ci, /tests\/render\.test\.mjs/);
+  assert.match(ci, /RUN_MERMAID=1 node --test tests\/render-mermaid\.test\.mjs/);
 
   assert.match(release, /node --test/);
   assert.match(release, /tests\/render-mermaid\.test\.mjs/);
-  assert.doesNotMatch(release, /tests\/render\.test\.mjs/);
+  assert.match(release, /RUN_MERMAID=1 node --test tests\/render-mermaid\.test\.mjs/);
 });
 
 test("buildPackage records the committed SHA and normalized file hashes", () => {

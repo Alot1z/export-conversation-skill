@@ -16,7 +16,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node --test
+      - name: Check commit messages
+        run: node tools/check-commit-policy.mjs
+      - run: node --test tests/adapter.test.mjs tests/canonical.test.mjs tests/cli.test.mjs tests/core.test.mjs tests/coverage.test.mjs tests/independence.test.mjs tests/ingest.test.mjs tests/manifest.test.mjs tests/mcp.test.mjs tests/migration.test.mjs tests/package.test.mjs tests/policy.test.mjs tests/project.test.mjs tests/query.test.mjs tests/reconstruct.test.mjs tests/render-mermaid.test.mjs tests/render.test.mjs tests/security.test.mjs tests/store.test.mjs tests/test-files.test.mjs tests/verify.test.mjs tests/zip.test.mjs
       - run: node scripts/mcp-server.mjs --self-test
       - run: node skills/export/scripts/validate-release.mjs
       - name: Install the pinned Mermaid CLI

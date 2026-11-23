@@ -5,9 +5,11 @@
   "type": "module",
   "description": "Harness-agnostic conversation capture, canonical storage and verified export",
   "scripts": {
-    "test": "node --test",
-    "test:core": "node --test tests/canonical.test.mjs tests/zip.test.mjs tests/store.test.mjs tests/ingest.test.mjs tests/reconstruct.test.mjs tests/coverage.test.mjs tests/render.test.mjs tests/query.test.mjs tests/verify.test.mjs tests/adapter.test.mjs tests/independence.test.mjs tests/migration.test.mjs tests/cli.test.mjs tests/mcp.test.mjs tests/security.test.mjs",
+    "test": "node --test tests/adapter.test.mjs tests/canonical.test.mjs tests/cli.test.mjs tests/core.test.mjs tests/coverage.test.mjs tests/independence.test.mjs tests/ingest.test.mjs tests/manifest.test.mjs tests/mcp.test.mjs tests/migration.test.mjs tests/package.test.mjs tests/policy.test.mjs tests/project.test.mjs tests/query.test.mjs tests/reconstruct.test.mjs tests/render-mermaid.test.mjs tests/render.test.mjs tests/security.test.mjs tests/store.test.mjs tests/test-files.test.mjs tests/verify.test.mjs tests/zip.test.mjs",
+    "test:core": "node --test tests/adapter.test.mjs tests/canonical.test.mjs tests/cli.test.mjs tests/core.test.mjs tests/coverage.test.mjs tests/independence.test.mjs tests/ingest.test.mjs tests/manifest.test.mjs tests/mcp.test.mjs tests/migration.test.mjs tests/package.test.mjs tests/policy.test.mjs tests/project.test.mjs tests/query.test.mjs tests/reconstruct.test.mjs tests/render.test.mjs tests/security.test.mjs tests/store.test.mjs tests/test-files.test.mjs tests/verify.test.mjs tests/zip.test.mjs",
     "test:render": "node --test tests/render-mermaid.test.mjs",
+    "policy:commits": "node tools/check-commit-policy.mjs",
+    "hooks:install": "node tools/install-git-hooks.mjs",
     "validate": "node skills/export/scripts/validate-release.mjs",
     "install:check": "node skills/export/scripts/install-skill.mjs --check",
     "package": "node tools/build-package.mjs",

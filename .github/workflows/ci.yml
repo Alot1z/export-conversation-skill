@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node --version
+      - name: Check commit messages
+        run: node tools/check-commit-policy.mjs
       - run: node skills/export/scripts/validate-release.mjs
       - name: Build package from the clean checkout
         run: node tools/build-package.mjs --out "${{ runner.temp }}/export-package"
@@ -30,7 +32,7 @@ jobs:
       - name: Check the installed files
         run: node skills/export/scripts/install-skill.mjs --package "${{ runner.temp }}/export-package" --target "${{ runner.temp }}/export-install" --check --json
       - name: Run the full suite
-        run: node --test > test-output.log 2>&1 || node tools/ci-annotate.mjs test-output.log
+        run: node --test tests/adapter.test.mjs tests/canonical.test.mjs tests/cli.test.mjs tests/core.test.mjs tests/coverage.test.mjs tests/independence.test.mjs tests/ingest.test.mjs tests/manifest.test.mjs tests/mcp.test.mjs tests/migration.test.mjs tests/package.test.mjs tests/policy.test.mjs tests/project.test.mjs tests/query.test.mjs tests/reconstruct.test.mjs tests/render-mermaid.test.mjs tests/render.test.mjs tests/security.test.mjs tests/store.test.mjs tests/test-files.test.mjs tests/verify.test.mjs tests/zip.test.mjs > test-output.log 2>&1 || node tools/ci-annotate.mjs test-output.log
       - run: node scripts/mcp-server.mjs --self-test
 
   render:
