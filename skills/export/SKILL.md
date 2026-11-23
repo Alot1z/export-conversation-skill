@@ -44,7 +44,7 @@ Coverage is never one boolean. `coverage_source`, `coverage_selection` and `cove
 
 Built-in adapters: `claude-code`, `codex`, `gemini-cli`, `chatgpt-export`, `openhands-transcript`, `freebuff-thread-context`, `generic-json`, `generic-jsonl`. Schema-1 exports migrate to schema 2 with verified backups and `RECONSTRUCTED` provenance.
 
-Export the current conversation to a well-formatted Markdown document with timestamps, messages, tool usage, diagrams, statistics and an explicit coverage statement. Project exports are stored under `<project>/.export/`, never directly in the project root.
+Export the current conversation to a Markdown document with timestamps, messages, tool usage, diagrams, statistics and an explicit coverage statement. Project exports are stored under `<project>/.export/`, never directly in the project root.
 
 ## Usage
 
@@ -159,7 +159,7 @@ export_id: <stable id, e.g. repo-or-harness plus session slug>
 session: <harness and session reference if known>
 last_message: <N>
 generated_at: <ISO 8601 timestamp>
-generator: export-conversation 2.2.1
+generator: export-conversation 3.0.0
 coverage: full
 ---
 
@@ -344,7 +344,7 @@ node scripts/project-export.mjs overview --destination "<project>" --out overvie
 ## Step 5 - Confirm to the user
 
 ```
-✓ Conversation exported to: [full path]
+Conversation exported to: [full path]
 
 - Destination: [project root] / .export
 - Mode: focused / archive

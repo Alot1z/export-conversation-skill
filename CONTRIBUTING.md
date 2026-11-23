@@ -1,239 +1,100 @@
-# Contributing to Export Conversation Skill
+# Contributing
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to the export-conversation skill.
+## Requirements
 
-## Development Setup
+- Node.js 20 or newer.
+- Git.
+- No npm install is required for the runtime or the tests.
 
-1. **Fork and clone the repository:**
-   ```bash
-   git clone https://github.com/Alot1z/export-conversation-skill.git
-   cd export-conversation-skill
-   ```
+## Development setup
 
-2. **Create a development symlink:**
-   ```bash
-   # Link to your local development directory
-   ln -sf $(pwd) ~/.claude/skills/export-conversation
-   ```
-
-3. **Verify the installation:**
-   ```bash
-   ls -l ~/.claude/skills/export-conversation
-   ```
-
-## Making Changes
-
-### File Structure
-
-The skill consists of a single file:
-- `SKILL.md` - Contains all skill logic, documentation, and instructions
-
-### Testing Your Changes
-
-1. **Edit `SKILL.md`:**
-   ```bash
-   # Use your preferred editor
-   vim SKILL.md
-   # or
-   code SKILL.md
-   ```
-
-2. **Test in Claude Code:**
-   - Open a Claude Code session
-   - Run `/export-conversation test-output`
-   - Verify the export works as expected
-   - Check that diagrams render correctly (if applicable)
-
-3. **Test edge cases:**
-   - Empty conversations
-   - Conversations with no code changes
-   - Conversations with many diagrams
-   - Different output paths
-
-### Code Style
-
-When editing `SKILL.md`:
-
-**Markdown:**
-- Use ATX-style headers (`#` prefix)
-- Indent code blocks with 4 spaces or triple backticks
-- Use inline code for commands and file paths
-
-**Instructions:**
-- Be specific and actionable
-- Use clear step-by-step instructions
-- Include examples where helpful
-- Maintain consistent formatting
-
-**Mermaid Diagrams:**
-- Keep diagrams focused on one concept
-- Use descriptive node labels
-- Show clear directional flow
-- Add comments for complex relationships
-
-## Pull Request Process
-
-1. **Create a feature branch:**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes:**
-   - Edit files
-   - Test thoroughly
-   - Add examples if introducing new features
-
-3. **Commit with clear messages:**
-   ```bash
-   git commit -m "feat: Add support for X"
-   ```
-   
-   Use conventional commit format:
-   - `feat:` - New features
-   - `fix:` - Bug fixes
-   - `docs:` - Documentation changes
-   - `refactor:` - Code refactoring
-   - `test:` - Test updates
-   - `chore:` - Maintenance tasks
-
-4. **Push to your fork:**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-5. **Open a Pull Request:**
-   - Provide a clear description
-   - Reference any related issues
-   - Include screenshots for visual changes
-   - Add example exports if relevant
-
-## Areas for Contribution
-
-### High Priority
-
-- 🐛 **Bug fixes** - Fix issues with exports or diagram generation
-- 📖 **Documentation** - Improve clarity, add examples, fix typos
-- ✨ **New diagram types** - Add support for additional Mermaid diagram types
-- 🎯 **Better diagram detection** - Improve logic for when to generate diagrams
-
-### Enhancement Ideas
-
-- **Table of Contents** - Auto-generate TOC for long exports
-- **Export Templates** - Allow users to customize export format
-- **Filtering** - Option to filter out certain types of messages
-- **Search** - Add keyword search in exports
-- **Stats Dashboard** - More detailed session analytics
-- **Export Formats** - Support for PDF, HTML, or other formats
-- **Compression** - Option to compress large exports
-- **Diff Export** - Export showing before/after code changes
-
-### What We're Looking For
-
-✅ **Do:**
-- Write clear, concise code
-- Add examples for new features
-- Test thoroughly before submitting
-- Update documentation
-- Follow existing patterns
-
-❌ **Don't:**
-- Break existing functionality
-- Add dependencies (skill should be self-contained)
-- Make massive refactors without discussion
-- Ignore code style guidelines
-
-## Reporting Issues
-
-### Before Reporting
-
-1. **Search existing issues** - Your issue may already be reported
-2. **Test with latest version** - Ensure you're using the current release
-3. **Verify installation** - Check that the skill is properly installed
-
-### Creating an Issue
-
-Include:
-- **Clear title** - Summarize the issue
-- **Description** - What happened vs. what you expected
-- **Steps to reproduce** - How to trigger the issue
-- **Environment** - Claude Code version, OS, etc.
-- **Example** - Minimal conversation that reproduces the issue
-- **Screenshots** - If applicable
-
-### Issue Template
-
-```markdown
-**Describe the bug**
-A clear description of what the bug is.
-
-**To Reproduce**
-1. Run `/export-conversation`
-2. See error
-
-**Expected behavior**
-What you expected to happen.
-
-**Environment:**
-- OS: [e.g., macOS 14.0]
-- Claude Code version: [e.g., 1.0.0]
-- Skill version: [e.g., 2.0.0]
-
-**Additional context**
-Any other information about the problem.
+```bash
+git clone https://github.com/Alot1z/export-conversation-skill.git
+cd export-conversation-skill
+node scripts/conversation.mjs doctor
 ```
 
-## Feature Requests
+To exercise the skill from a Claude Code checkout:
 
-We welcome feature requests! Please:
-
-1. **Check existing requests** - Vote on existing issues instead of duplicating
-2. **Describe the use case** - Why is this feature valuable?
-3. **Propose a solution** - How might it work?
-4. **Consider alternatives** - Are there other approaches?
-
-### Feature Request Template
-
-```markdown
-**Is your feature request related to a problem?**
-A clear description of the problem.
-
-**Describe the solution you'd like**
-What you want to happen.
-
-**Describe alternatives you've considered**
-Other approaches you've thought about.
-
-**Additional context**
-Screenshots, mockups, examples, etc.
+```bash
+claude --plugin-dir .
 ```
 
-## Code of Conduct
+To install it into an agent root:
 
-### Our Standards
+```bash
+node skills/export/scripts/install-skill.mjs
+node skills/export/scripts/install-skill.mjs --check
+```
 
-- Be respectful and inclusive
-- Accept constructive criticism
-- Focus on what's best for the community
-- Show empathy toward others
+## Tests
 
-### Unacceptable Behavior
+Run the full suite:
 
-- Harassment or discriminatory language
-- Trolling or insulting comments
-- Personal or political attacks
-- Publishing private information
+```bash
+npm test
+```
 
-## Questions?
+The `test` script lists every test file explicitly. Do not replace it with `node --test` or a glob: Node 20 and some CI shells do not expand test globs consistently.
 
-- 💬 Open a [Discussion](https://github.com/Alot1z/export-conversation-skill/discussions)
-- 🐛 Report [Issues](https://github.com/Alot1z/export-conversation-skill/issues)
-- 📧 Contact maintainers (see README)
+Run the real Mermaid renderer separately:
 
-## Recognition
+```bash
+RUN_MERMAID=1 node --test tests/render-mermaid.test.mjs
+```
 
-Contributors will be recognized in:
-- Release notes
-- Contributors section
-- Project documentation
+Before a release or package build, run:
 
-Thank you for contributing to make this skill better! 🎉
+```bash
+node skills/export/scripts/validate-release.mjs
+node skills/export/scripts/install-skill.mjs --check
+node tools/build-package.mjs --clean --out ../.account-package
+```
+
+Add or update a test for every behavioral script change. A fence count is not validation; renderer and skill workflow changes must pass the renderer and release checks.
+
+## Commit messages
+
+Write the message in a file and commit it verbatim:
+
+```bash
+git commit -F path/to/message.txt
+```
+
+Do not use a harness or helper that appends attribution. Every commit must follow these rules:
+
+- No `Co-Authored-By` trailer.
+- No `Generated with Codebuff`, `Generated with Freebuff` or similar line.
+- No tool, model or agent attribution in the subject or body.
+- No emoji.
+- A short imperative subject, then a factual body when the reason is not obvious.
+
+The same rules apply to pull request titles, pull request bodies, issues and documentation. Keep public artifacts focused on the project, not on the tooling used to produce them.
+
+Install the local commit-msg hook once per clone:
+
+```bash
+npm run hooks:install
+```
+
+CI runs `node tools/check-commit-policy.mjs` and fails on a violation.
+
+## Pull requests
+
+1. Create a branch from `main`.
+2. Keep the change focused and include tests for behavior changes.
+3. Run `npm test` and `node skills/export/scripts/validate-release.mjs`.
+4. Open a pull request with a factual description of the problem and the change.
+5. Do not include generated exports, local `.export` data, secrets or machine-specific paths.
+
+## Code style
+
+- Use ESM and the existing dependency-free style.
+- Keep the core independent of harness SDKs, LLM clients, MCP clients and paid services.
+- Preserve raw evidence; do not drop unknown records to make a test pass.
+- Refuse unsafe paths and symlink escapes instead of writing through them.
+- Report verification failures honestly. Do not weaken a test or a gate to make it pass.
+
+## Security
+
+Do not commit credentials, tokens, private conversation exports or absolute paths from a local machine. Report a security issue privately to the maintainer rather than opening a public issue with exploit details.

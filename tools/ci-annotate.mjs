@@ -19,7 +19,7 @@ const text = readFileSync(path, "utf8");
 const lines = text
   .split(/\r?\n/)
   .map((line) => line.trim())
-  .filter((line) => /^(?:✖|not ok)|AssertionError|Error:/.test(line))
+  .filter((line) => /^(?:\u2716|not ok)|AssertionError|Error:/.test(line))
   .slice(0, 25);
 
 for (const line of lines) {
